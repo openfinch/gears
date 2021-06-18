@@ -1,7 +1,7 @@
 use std::thread::sleep;
 use std::time::{Duration, Instant};
 
-use super::gameobject::GameObject;
+use super::game_object::GameObject;
 use super::log_manager::LogManager;
 use super::manager::Manager;
 

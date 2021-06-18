@@ -1,3 +1,5 @@
+#![allow(used_unused_variable)]
+
 use display_manager::DisplayManager;
 use game_manager::GameManager;
 use log_manager::LogManager;
@@ -5,7 +7,7 @@ use world_manager::WorldManager;
 
 mod display_manager;
 mod game_manager;
-mod gameobject;
+mod game_object;
 mod log_manager;
 mod manager;
 mod quaternion;
