@@ -66,6 +66,11 @@ mod tests {
     }
 
     #[test]
+    fn vector3_as_default_up() {
+        assert_eq!(Vector3::up(), 0.0);
+    }
+
+    #[test]
     fn can_calculate_magnitude_of_vector3() {
         let v = Vector3 {
             x: 1.45698,
