@@ -19,10 +19,10 @@ impl Quaternion {
     /// The identity rotation
     pub fn identity() -> Quaternion {
         Quaternion {
-            w: 0.0,
+            w: 1.0,
             x: 0.0,
             y: 0.0,
-            z: 1.0,
+            z: 0.0,
         }
     }
 }
@@ -31,18 +31,18 @@ impl Quaternion {
 impl Quaternion {
     /// Returns the euler angle representation of the rotation
     pub fn euler_angles(&self) -> Vector3 {
-        let c = Quaternion::quaternion_to_euler(self.w, self.x, self.y, self.z);
-        Vector3 {
-            x: c.0,
-            y: c.1,
-            z: c.2,
-        }
+        let (x, y, z) = Quaternion::quaternion_to_euler(self.w, self.x, self.y, self.z);
+        Vector3 { x, y, z }
     }
 
     /// Returns this quaternion with a magnitude of 1
     pub fn normalized(&self) -> Quaternion {
-        // TODO: Work out how to do this...
-        Quaternion::identity()
+        let magnitude = (self.w.powf(2.0) + self.x.powf(2.0) + self.y.powf(2.0) + self.z.powf(2.0)).sqrt();
+        let w = self.w / magnitude;
+        let x = self.x / magnitude;
+        let y = self.y / magnitude;
+        let z = self.z / magnitude;
+        Quaternion{w,x,y,z}
     }
 }
 
@@ -55,13 +55,8 @@ impl Quaternion {
     /// Constructs new Quaternion with given Vector3
     pub fn new_from_euler(vector: Vector3) -> Quaternion {
         // REFACTOR: This should be an unpack/destructure.
-        let c = Quaternion::euler_to_quaternion(vector.x, vector.y, vector.z);
-        Quaternion {
-            x: c.0,
-            y: c.1,
-            z: c.2,
-            w: c.3,
-        }
+        let (x, y, z, w) = Quaternion::euler_to_quaternion(vector.x, vector.y, vector.z);
+        Quaternion { x, y, z, w }
     }
 }
 
@@ -166,12 +161,12 @@ impl Quaternion {
         let cr = (x * 0.5).cos();
         let sr = (x * 0.5).sin();
 
-        let w = cr * cp * cy + sr * sp * sy;
-        let x = sr * cp * cy - cr * sp * sy;
-        let y = cr * sp * cy + sr * cp * sy;
-        let z = cr * cp * sy - sr * sp * cy;
+        let _w = cr * cp * cy + sr * sp * sy;
+        let _x = sr * cp * cy - cr * sp * sy;
+        let _y = cr * sp * cy + sr * cp * sy;
+        let _z = cr * cp * sy - sr * sp * cy;
 
-        (x, y, z, w)
+        (_x, _y, _z, _w)
     }
 
     fn quaternion_to_euler(w: f32, x: f32, y: f32, z: f32) -> (f32, f32, f32) {
@@ -195,5 +190,140 @@ impl Quaternion {
         let ez = siny_cosp.atan2(cosy_cosp);
 
         (ex, ey, ez)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::f32::consts::FRAC_PI_2;
+
+    #[test]
+    fn quaternion_identity_is_zeroed_by_default() {
+        let q = Quaternion::identity();
+
+        assert_eq!(q.x, 0.0);
+        assert_eq!(q.y, 0.0);
+        assert_eq!(q.z, 0.0);
+        assert_eq!(q.w, 1.0);
+    }
+
+    #[test]
+    fn quaternion_can_derive_euler_angles() {
+        let q = Quaternion { x: 90.0, y: 90.0, z: 90.0, w: 1.0, };
+        let eq = q.euler_angles();
+
+        assert_eq!(eq.x, 2.6734982);
+        assert_eq!(eq.y, -FRAC_PI_2);
+        assert_eq!(eq.z, 2.6734982);
+    }
+
+    #[test]
+    fn quaternion_can_be_normalised() {
+        let q = Quaternion { x: 90.0, y: 90.0, z: 90.0, w: 1.0, };
+        let eq = q.normalized();
+
+        assert_eq!(eq.x, 0.57733834);
+        assert_eq!(eq.y, 0.57733834);
+        assert_eq!(eq.z, 0.57733834);
+        assert_eq!(eq.w, 0.0064148707);
+    }
+
+    #[test]
+    fn quaternion_can_be_constructed_with_new() {
+        let q = Quaternion::new(1.0, 90.0, 90.0, 90.0,);
+
+        assert_eq!(q.x, 90.0);
+        assert_eq!(q.y, 90.0);
+        assert_eq!(q.z, 90.0);
+        assert_eq!(q.w, 1.0);
+    }
+
+    #[test]
+    #[ignore]
+    fn quaternion_can_be_constructed_from_euler_vector3() {
+        // TODO: This is broken..
+        let v = Vector3{x: 2.6734982, y: -FRAC_PI_2, z: 2.6734982};
+        let q = Quaternion::new_from_euler(v);
+
+        assert_eq!(q.x, 90.0);
+        assert_eq!(q.y, 90.0);
+        assert_eq!(q.z, 90.0);
+        assert_eq!(q.w, 1.0);
+    }
+
+    #[test]
+    fn quaternion_can_be_set_to_a_new_value() {
+        let mut q = Quaternion::new(1.0, 90.0, 90.0, 90.0);
+        q.set(2.0, 180.0, 35.666666, 0.0);
+
+        assert_eq!(q.x, 180.0);
+        assert_eq!(q.y, 35.666666);
+        assert_eq!(q.z, 0.0);
+        assert_eq!(q.w, 2.0);
+    }
+
+    #[test]
+    fn quaternion_can_be_set_to_a_new_value_from_euler() {
+        let mut q = Quaternion::new(1.0, 90.0, 90.0, 90.0);
+        let v = Vector3{x: 2.6734982, y: -FRAC_PI_2, z: 2.6734982};
+        q.set_from_euler(v);
+
+        assert_eq!(q.x, 0.3190371);
+        assert_eq!(q.y, 0.6310431);
+        assert_eq!(q.z, 0.3190371);
+        assert_eq!(q.w, -0.6310431);
+    }
+
+    #[test]
+    #[ignore]
+    fn can_calculate_the_angle_between_two_quaternions() {
+        // TODO: This doesn't work, qv being returned as NaN
+        let q0 = Quaternion::new(1.0, 180.0, 180.0, 180.0);
+        let q1 = Quaternion::new(0.5, 90.0, 90.0, 90.0);
+
+        let qv = Quaternion::angle(q0,q1);
+
+        assert_eq!(qv, 90.0);
+    }
+
+    #[test]
+    fn can_calculate_the_rotation_of_a_angle_about_an_axis() {
+        // TODO: This doesn't work, qv being returned as NaN
+        let v = Vector3{x: 2.6734982, y: -FRAC_PI_2, z: 2.6734982};
+
+        let q = Quaternion::angle_axis(180.0,v);
+
+        assert_eq!(q.x, 481.22968);
+        assert_eq!(q.y, -282.74335);
+        assert_eq!(q.z, 481.22968);
+        assert_eq!(q.w, -0.5984601);
+    }
+
+    #[test]
+    fn can_get_quaternion_attributes_by_index() {
+        // TODO: This doesn't work, qv being returned as NaN
+        let q = Quaternion::new(0.5, 90.0, 90.0, 90.0);
+
+        assert_eq!(q[0], 90.0);
+        assert_eq!(q[1], 90.0);
+        assert_eq!(q[2], 90.0);
+        assert_eq!(q[3], 0.5);
+    }
+
+    #[test]
+    #[should_panic(expected = "Index out of range, got 4.")]
+    fn getting_quaternion_attributes_by_index_panics_if_out_of_range() {
+        // TODO: This doesn't work, qv being returned as NaN
+        let q = Quaternion::new(0.5, 90.0, 90.0, 90.0)[4];
+    }
+
+    #[test]
+    fn can_get_quaternion_attributes_as_str() {
+        // TODO: This doesn't work, qv being returned as NaN
+        let q = Quaternion::new(0.5, 90.0, 90.0, 90.0);
+        let qs = format!("{}", q);
+
+        assert_eq!(qs, "{90, 90, 90, 0.5}");
     }
 }
