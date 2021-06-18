@@ -37,12 +37,13 @@ impl Quaternion {
 
     /// Returns this quaternion with a magnitude of 1
     pub fn normalized(&self) -> Quaternion {
-        let magnitude = (self.w.powf(2.0) + self.x.powf(2.0) + self.y.powf(2.0) + self.z.powf(2.0)).sqrt();
+        let magnitude =
+            (self.w.powf(2.0) + self.x.powf(2.0) + self.y.powf(2.0) + self.z.powf(2.0)).sqrt();
         let w = self.w / magnitude;
         let x = self.x / magnitude;
         let y = self.y / magnitude;
         let z = self.z / magnitude;
-        Quaternion{w,x,y,z}
+        Quaternion { w, x, y, z }
     }
 }
 
@@ -210,7 +211,12 @@ mod tests {
 
     #[test]
     fn quaternion_can_derive_euler_angles() {
-        let q = Quaternion { x: 90.0, y: 90.0, z: 90.0, w: 1.0, };
+        let q = Quaternion {
+            x: 90.0,
+            y: 90.0,
+            z: 90.0,
+            w: 1.0,
+        };
         let eq = q.euler_angles();
 
         assert_eq!(eq.x, 2.6734982);
@@ -220,7 +226,12 @@ mod tests {
 
     #[test]
     fn quaternion_can_be_normalised() {
-        let q = Quaternion { x: 90.0, y: 90.0, z: 90.0, w: 1.0, };
+        let q = Quaternion {
+            x: 90.0,
+            y: 90.0,
+            z: 90.0,
+            w: 1.0,
+        };
         let eq = q.normalized();
 
         assert_eq!(eq.x, 0.57733834);
@@ -231,7 +242,7 @@ mod tests {
 
     #[test]
     fn quaternion_can_be_constructed_with_new() {
-        let q = Quaternion::new(1.0, 90.0, 90.0, 90.0,);
+        let q = Quaternion::new(1.0, 90.0, 90.0, 90.0);
 
         assert_eq!(q.x, 90.0);
         assert_eq!(q.y, 90.0);
@@ -243,7 +254,11 @@ mod tests {
     #[ignore]
     fn quaternion_can_be_constructed_from_euler_vector3() {
         // TODO: This is broken..
-        let v = Vector3{x: 2.6734982, y: -FRAC_PI_2, z: 2.6734982};
+        let v = Vector3 {
+            x: 2.6734982,
+            y: -FRAC_PI_2,
+            z: 2.6734982,
+        };
         let q = Quaternion::new_from_euler(v);
 
         assert_eq!(q.x, 90.0);
@@ -266,7 +281,11 @@ mod tests {
     #[test]
     fn quaternion_can_be_set_to_a_new_value_from_euler() {
         let mut q = Quaternion::new(1.0, 90.0, 90.0, 90.0);
-        let v = Vector3{x: 2.6734982, y: -FRAC_PI_2, z: 2.6734982};
+        let v = Vector3 {
+            x: 2.6734982,
+            y: -FRAC_PI_2,
+            z: 2.6734982,
+        };
         q.set_from_euler(v);
 
         assert_eq!(q.x, 0.3190371);
@@ -282,7 +301,7 @@ mod tests {
         let q0 = Quaternion::new(1.0, 180.0, 180.0, 180.0);
         let q1 = Quaternion::new(0.5, 90.0, 90.0, 90.0);
 
-        let qv = Quaternion::angle(q0,q1);
+        let qv = Quaternion::angle(q0, q1);
 
         assert_eq!(qv, 90.0);
     }
@@ -290,9 +309,13 @@ mod tests {
     #[test]
     fn can_calculate_the_rotation_of_a_angle_about_an_axis() {
         // TODO: This doesn't work, qv being returned as NaN
-        let v = Vector3{x: 2.6734982, y: -FRAC_PI_2, z: 2.6734982};
+        let v = Vector3 {
+            x: 2.6734982,
+            y: -FRAC_PI_2,
+            z: 2.6734982,
+        };
 
-        let q = Quaternion::angle_axis(180.0,v);
+        let q = Quaternion::angle_axis(180.0, v);
 
         assert_eq!(q.x, 481.22968);
         assert_eq!(q.y, -282.74335);
