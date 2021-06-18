@@ -1,17 +1,17 @@
-mod display_manager;
-mod game_manager;
-mod log_manager;
-mod manager;
-mod gameobject;
-mod quaternion;
-mod transform;
-mod vector;
-mod world_manager;
-
 use display_manager::DisplayManager;
 use game_manager::GameManager;
 use log_manager::LogManager;
 use world_manager::WorldManager;
+
+mod display_manager;
+mod game_manager;
+mod gameobject;
+mod log_manager;
+mod manager;
+mod quaternion;
+mod transform;
+mod vector;
+mod world_manager;
 
 fn main() {
     let mut log_manager: LogManager = LogManager::new();

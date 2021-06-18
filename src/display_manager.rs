@@ -26,10 +26,10 @@ impl DisplayManager<'_> {
     pub fn startup(&mut self) {
         self.logger
             .info(String::from("DisplayManager.startup(): Current window set"));
-        self.logger.info(String::from(format!(
+        self.logger.info(format!(
             "DisplayManager.startup(): max X is {}, max Y is {}",
             self.max_x, self.max_y
-        )));
+        ));
         self.started = true
     }
     pub fn shutdown(mut self) {

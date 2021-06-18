@@ -1,7 +1,9 @@
-/// Quaternions
-/// Implements: https://docs.unity3d.com/ScriptReference/Quaternion.html
+// Quaternions
+// Implements: https://docs.unity3d.com/ScriptReference/Quaternion.html
+
 use super::vector::Vector3;
 use std::f32::consts::PI;
+use std::fmt;
 use std::ops::Index;
 
 /// Quaternions are used to represent rotations.
@@ -48,7 +50,7 @@ impl Quaternion {
 impl Quaternion {
     /// Constructs new Quaternion with given x,y,z,w components
     pub fn new(w: f32, x: f32, y: f32, z: f32) -> Quaternion {
-        Quaternion { x, y, z, w }
+        Quaternion { w, x, y, z }
     }
     /// Constructs new Quaternion with given Vector3
     pub fn new_from_euler(vector: Vector3) -> Quaternion {
@@ -99,24 +101,19 @@ impl Quaternion {
     }
 
     /// Converts a rotation to angle-axis representation (angles in degrees)
-    pub fn to_angle_axis(angle: &f32, axis: &Vector3) {}
-
-    /// Returns a formatted string of the Quaternion
-    pub fn to_string(&self) -> String {
-        format!("{{{}, {}, {}, {}}}", self.x, self.y, self.z, self.w)
-    }
+    pub fn to_angle_axis(&self, angle: &f32, axis: &Vector3) {}
 }
 
 // Static Methods
 impl Quaternion {
     /// Returns the angle in degrees between two rotations a and b
-    pub fn Angle(a: Quaternion, b: Quaternion) -> f32 {
-        let f = Quaternion::Dot(a, b);
+    pub fn angle(a: Quaternion, b: Quaternion) -> f32 {
+        let f = Quaternion::dot(a, b);
         (((f).abs().min(1.0)) * 2.0 * 57.29578).acos()
     }
 
     /// Returns a rotation which rotates `angle` degrees around `axis`.
-    pub fn AngleAxis(angle: f32, axis: Vector3) -> Quaternion {
+    pub fn angle_axis(angle: f32, axis: Vector3) -> Quaternion {
         Quaternion {
             w: angle.cos(),
             x: axis.x * angle,
@@ -126,7 +123,7 @@ impl Quaternion {
     }
 
     /// Returns the dot product between two rotations
-    pub fn Dot(a: Quaternion, b: Quaternion) -> f32 {
+    pub fn dot(a: Quaternion, b: Quaternion) -> f32 {
         a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w
     }
 }
@@ -144,6 +141,17 @@ impl Index<i8> for Quaternion {
             3 => &self.w,
             _ => panic!("Index out of range, got {}.", i),
         }
+    }
+}
+
+impl fmt::Display for Quaternion {
+    /// Returns a formatted string of the Quaternion
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "{}",
+            format!("{{{}, {}, {}, {}}}", self.x, self.y, self.z, self.w)
+        )
     }
 }
 

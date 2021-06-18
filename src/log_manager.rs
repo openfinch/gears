@@ -4,7 +4,7 @@ use std::io::prelude::*;
 
 use super::manager::Manager;
 
-const LOG_LEVEL: LogLevel = LogLevel::DEBUG;
+const LOG_LEVEL: LogLevel = LogLevel::Debug;
 
 impl Manager for LogManager {
     fn m_type(&self) -> &str {
@@ -13,10 +13,10 @@ impl Manager for LogManager {
 }
 
 enum LogLevel {
-    ERROR = 3,
-    WARN = 2,
-    INFO = 1,
-    DEBUG = 0,
+    Error = 3,
+    Warn = 2,
+    Info = 1,
+    Debug = 0,
 }
 
 pub struct LogManager {
@@ -43,16 +43,16 @@ impl LogManager {
         self.started = false
     }
     pub fn error(&self, msg: String) {
-        self.write_message(msg, LogLevel::ERROR)
+        self.write_message(msg, LogLevel::Error)
     }
     pub fn warn(&self, msg: String) {
-        self.write_message(msg, LogLevel::WARN)
+        self.write_message(msg, LogLevel::Warn)
     }
     pub fn info(&self, msg: String) {
-        self.write_message(msg, LogLevel::INFO)
+        self.write_message(msg, LogLevel::Info)
     }
     pub fn debug(&self, msg: String) {
-        self.write_message(msg, LogLevel::DEBUG)
+        self.write_message(msg, LogLevel::Debug)
     }
     fn write_message(&self, msg: String, level: LogLevel) {
         if level as i8 >= LOG_LEVEL as i8 {

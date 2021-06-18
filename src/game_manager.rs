@@ -1,8 +1,9 @@
-use super::log_manager::LogManager;
-use super::manager::Manager;
-use super::gameobject::GameObject;
 use std::thread::sleep;
 use std::time::{Duration, Instant};
+
+use super::gameobject::GameObject;
+use super::log_manager::LogManager;
+use super::manager::Manager;
 
 enum GameState {
     PreStart = 0,
@@ -25,7 +26,7 @@ pub struct GameManager<'a> {
     logger: &'a LogManager,
     state: GameState,
     pub frame_time: Duration,
-    pub object_list: Vec<GameObject<'a>>
+    pub object_list: Vec<GameObject<'a>>,
 }
 
 impl Manager for GameManager<'_> {
@@ -40,8 +41,8 @@ impl GameManager<'_> {
             started: false,
             logger: &log_manager,
             state: GameState::PreStart,
-            frame_time: Duration::new(0, 16666666 as u32),
-            object_list: vec![]
+            frame_time: Duration::new(0, 16666666_u32),
+            object_list: vec![],
         }
     }
     pub fn startup(&mut self) {
@@ -74,7 +75,7 @@ impl GameManager<'_> {
                     for gameobject in &mut self.object_list {
                         gameobject.update();
                     }
-                    
+
                     // Draw current scene to back buffer
                     // Swap back buffer to current buffer
                     // Measure loop_time // i.e., how long above steps took

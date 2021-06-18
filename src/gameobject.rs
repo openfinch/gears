@@ -1,5 +1,6 @@
-use super::transform::Transform;
 use rand::Rng;
+
+use super::transform::Transform;
 
 pub struct GameObject<'a> {
     m_id: i128,
