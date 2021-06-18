@@ -11,7 +11,7 @@
 [![codecov](https://codecov.io/gh/openfinch/gears/branch/main/graph/badge.svg?token=U915HQAF0A)](https://codecov.io/gh/openfinch/gears)
 [![GitHub Issues](https://img.shields.io/github/issues/openfinch/gears.svg)](https://github.com/openfinch/gears/issues)
 [![GitHub Pull Requests](https://img.shields.io/github/issues-pr/openfinch/gears.svg)](https://github.com/openfinch/gears/pulls)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE)
+[![GitHub](https://img.shields.io/github/license/openfinch/gears)](/LICENSE)
 
 </div>
 
