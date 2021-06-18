@@ -57,7 +57,7 @@ impl Quaternion {
     pub fn new_from_euler(vector: Vector3) -> Quaternion {
         // REFACTOR: This should be an unpack/destructure.
         let (x, y, z, w) = Quaternion::euler_to_quaternion(vector.x, vector.y, vector.z);
-        Quaternion { x, y, z, w }
+        Quaternion { w, x, y, z }
     }
 }
 
