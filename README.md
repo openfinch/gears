@@ -1,9 +1,12 @@
-<p align="center">
-  <a href="" rel="noopener">
- <img width=200px height=200px src="https://i.imgur.com/6wj0hh6.jpg" alt="Gears logo"></a>
-</p>
+[comment]: <> (<p align="center">)
 
-<h3 align="center">Gears</h3>
+[comment]: <> (  <a href="" rel="noopener">)
+
+[comment]: <> ( <img width=200px height=200px src="https://i.imgur.com/6wj0hh6.jpg" alt="Gears logo"></a>)
+
+[comment]: <> (</p>)
+
+<h1 align="center">Gears</h3>
 
 <div align="center">
 
@@ -17,7 +20,7 @@
 
 ---
 
-<p align="center"> Few lines describing your project.
+<p align="center"> Building a game engine is hard...
     <br> 
 </p>
 
@@ -86,17 +89,14 @@ Add notes about how to use the system.
 Add additional notes about how to deploy this on a live system.
 
 ## ⛏️ Built Using <a name = "built_using"></a>
-- [MongoDB](https://www.mongodb.com/) - Database
-- [Express](https://expressjs.com/) - Server Framework
-- [VueJs](https://vuejs.org/) - Web Framework
-- [NodeJs](https://nodejs.org/en/) - Server Environment
+- [Rust](https://www.rust-lang.org/) - Lingua Franca
+- [gfx-rs](https://github.com/gfx-rs/gfx) - Vulkan abstractions
 
 ## ✍️ Authors <a name = "authors"></a>
-- [@kylelobo](https://github.com/kylelobo) - Idea & Initial work
+- [@openfinch](https://github.com/openfinch)
 
-See also the list of [contributors](https://github.com/kylelobo/The-Documentation-Compendium/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/openfinch/gears/contributors) who participated in this project.
 
 ## 🎉 Acknowledgements <a name = "acknowledgement"></a>
-- Hat tip to anyone whose code was used
-- Inspiration
-- References
+- [@kylelobo](https://github.com/kylelobo) - Awesome README, CONTRIBUTING and Issue templates.
+- [Mark Claypool and WPI](https://dragonfly.wpi.edu/engine/) - For the amazing "Dragonfly – Program a Game Engine from Scratch" book.
