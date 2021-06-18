@@ -11,3 +11,7 @@ target/
 
 # Project-specific
 gears.log
+
+# Editor Stuff
+.idea/
+.vscode/
