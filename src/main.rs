@@ -1,4 +1,4 @@
-#![allow(used_unused_variable)]
+#![allow(unused_variables)]
 
 use display_manager::DisplayManager;
 use game_manager::GameManager;
