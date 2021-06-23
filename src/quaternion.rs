@@ -7,6 +7,7 @@ use std::fmt;
 use std::ops::Index;
 
 /// Quaternions are used to represent rotations.
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Quaternion {
     pub w: f32,
     pub x: f32,

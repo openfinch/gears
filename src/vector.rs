@@ -1,5 +1,6 @@
 use std::ops::Add;
 
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Vector3 {
     pub x: f32,
     pub y: f32,

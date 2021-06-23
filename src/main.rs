@@ -2,18 +2,17 @@
 
 use display_manager::DisplayManager;
 use game_manager::GameManager;
+use legion::*;
 use log_manager::LogManager;
-use world_manager::WorldManager;
+use std::time::Instant;
 
+mod component;
 mod display_manager;
 mod game_manager;
-mod game_object;
 mod log_manager;
 mod manager;
 mod quaternion;
-mod transform;
 mod vector;
-mod world_manager;
 
 fn main() {
     let mut log_manager: LogManager = LogManager::new();
@@ -26,16 +25,16 @@ fn main() {
     let mut display_manager: DisplayManager = DisplayManager::new(&log_manager);
     display_manager.startup();
 
-    let mut world_manager: WorldManager = WorldManager::new(&log_manager);
-    world_manager.startup();
+    let mut world = World::default();
 
-    let mut game_manager: GameManager = GameManager::new(&log_manager);
+    let mut game_manager: GameManager = GameManager::new(&log_manager, &mut world);
     game_manager.startup();
 
+    let time = Instant::now();
     game_manager.run();
+    log_manager.debug(format!("{}ms", time.elapsed().as_millis()));
 
     game_manager.shutdown();
-    world_manager.shutdown();
     display_manager.shutdown();
     log_manager.shutdown();
 }

@@ -1,32 +1,51 @@
 use std::thread::sleep;
 use std::time::{Duration, Instant};
 
-use super::game_object::GameObject;
 use super::log_manager::LogManager;
 use super::manager::Manager;
+use super::world::World;
+use crate::component::{Transform, Velocity};
+use crate::quaternion::Quaternion;
+use crate::vector::Vector3;
+use legion::*;
 
 enum GameState {
     PreStart = 0,
     Running = 1,
 }
 
-pub struct TickTime {
-    pub before_ts: Instant,
-    pub after_ts: Instant,
+pub struct Time {
+    _delta: Instant,
 }
 
-impl TickTime {
-    pub fn elapsed_time(&self) -> Duration {
-        self.after_ts - self.before_ts
+impl Time {
+    pub fn delta(&mut self) -> Duration {
+        let elapsed = self._delta.elapsed();
+        self._delta = Instant::now();
+        return elapsed;
     }
+
+    pub fn split(&self) -> Duration {
+        self._delta.elapsed()
+    }
+}
+
+#[system(for_each)]
+fn update_positions(transform: &mut Transform, velocity: &Velocity, #[resource] time: &Time) {
+    let split = time.split().as_secs_f32();
+    transform.position.x += velocity.dx * split;
+    transform.position.y += velocity.dy * split;
+    transform.position.z += velocity.dz * split;
 }
 
 pub struct GameManager<'a> {
     started: bool,
     logger: &'a LogManager,
     state: GameState,
-    pub frame_time: Duration,
-    pub object_list: Vec<GameObject<'a>>,
+    schedule: Schedule,
+    resources: Resources,
+    pub target_time: Duration,
+    pub world: &'a mut World,
 }
 
 impl Manager for GameManager<'_> {
@@ -36,19 +55,52 @@ impl Manager for GameManager<'_> {
 }
 
 impl GameManager<'_> {
-    pub fn new(log_manager: &LogManager) -> GameManager {
+    pub fn new<'a>(log_manager: &'a LogManager, world: &'a mut World) -> GameManager<'a> {
         GameManager {
             started: false,
             logger: &log_manager,
             state: GameState::PreStart,
-            frame_time: Duration::new(0, 16666666_u32),
-            object_list: vec![],
+            schedule: Schedule::builder()
+                .add_system(update_positions_system())
+                .build(),
+            resources: Resources::default(),
+            target_time: Duration::new(0, 16666666_u32),
+            world,
         }
     }
     pub fn startup(&mut self) {
         self.logger
             .info(String::from("GameManager.startup(): Game started"));
-        self.started = true
+        self.started = true;
+        let entity: Entity = self.world.push((
+            Transform {
+                position: Vector3 {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.0,
+                },
+                rotation: Quaternion {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.0,
+                    w: 0.0,
+                },
+                scale: Vector3 {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.0,
+                },
+            },
+            Velocity {
+                dx: 1.0,
+                dy: 1.0,
+                dz: 1.0,
+            },
+        ));
+
+        self.resources.insert(Time {
+            _delta: Instant::now(),
+        });
     }
     pub fn shutdown(mut self) {
         self.started = false
@@ -56,34 +108,43 @@ impl GameManager<'_> {
     pub fn run(&mut self) {
         self.state = GameState::Running;
 
-        let mut timer = TickTime {
-            before_ts: Instant::now(),
-            after_ts: Instant::now(),
-        };
-
         let mut e = 0;
         loop {
             e += 1;
             match self.state {
                 GameState::Running => {
-                    self.logger.info(String::from("Running loop"));
-                    // Get start time
-                    timer.before_ts = Instant::now();
+                    // self.logger.info(String::from("Running loop"));
+                    // Reset DeltaTime
+                    self.resources.get_mut::<Time>().map(|mut d| d.delta());
+
                     // Get input // e.g., keyboard/mouse
 
                     // Update game world state
-                    for gameobject in &mut self.object_list {
-                        gameobject.update();
+                    self.schedule.execute(&mut self.world, &mut self.resources);
+
+                    let mut query = <&Transform>::query();
+
+                    // you can then iterate through the components found in the world
+                    for position in query.iter(self.world) {
+                        println!("{:?}", position);
                     }
 
                     // Draw current scene to back buffer
-                    // Swap back buffer to current buffer
-                    // Measure loop_time // i.e., how long above steps took
-                    timer.after_ts = Instant::now();
-                    // Sleep for (TARGET_TIME - loop_time)
-                    sleep(self.frame_time - timer.elapsed_time());
+                    // self.logger.debug(String::from("Draw current scene to back buffer"));
 
-                    if e == 10 {
+                    // Swap back buffer to current buffer
+                    // self.logger.debug(String::from("Swap back buffer to current buffer"));
+
+                    // Measure loop_time // i.e., how long above steps took
+                    let loop_time = self
+                        .resources
+                        .get::<Time>()
+                        .map(|d| d.split())
+                        .unwrap_or(Duration::new(0, 0));
+                    // Sleep for (target_time - loop_time)
+                    sleep(self.target_time - loop_time);
+
+                    if e == 60 {
                         self.state = GameState::PreStart;
                     }
                 }
